@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About | KasiMadeWebz</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0b;
+      --fg: #f5f5f4;
+      --muted: #6b6b6b;
+      --accent: #e85d04;
+      --accent-glow: rgba(232, 93, 4, 0.4);
+      --card-bg: rgba(20, 20, 22, 0.7);
+      --border: rgba(255, 255, 255, 0.08);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Video Background */
+    .video-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      overflow: hidden;
+    }
+
+    .video-container video {
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      object-fit: cover;
+    }
+
+    /* Overlay */
+    .video-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: linear-gradient(
+        180deg,
+        rgba(10, 10, 11, 0.6) 0%,
+        rgba(10, 10, 11, 0.8) 50%,
+        rgba(10, 10, 11, 0.95) 100%
+      );
+    }
+
+    /* Vignette */
+    .vignette {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+      background: radial-gradient(
+        ellipse at center,
+        transparent 0%,
+        transparent 40%,
+        rgba(0, 0, 0, 0.6) 100%
+      );
+    }
+
+    /* Navbar */
+    .navbar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      padding: 1.5rem 2rem;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      transform: translateY(-10px);
+      animation: navFadeIn 0.6s ease-out 0.3s forwards;
+    }
+
+    @keyframes navFadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .nav-link {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.5);
+      text-decoration: none;
+      padding: 0.75rem 1.25rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 100px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-link::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.5s ease;
+    }
+
+    .nav-link:hover::before {
+      transform: translateX(100%);
+    }
+
+    .nav-link:hover {
+      color: rgba(255, 255, 255, 0.9);
+      border-color: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-dot {
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.2); }
+    }
+
+    /* Main Content */
+    .main-content {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8rem 2rem 4rem;
+    }
+
+    /* Hero Section */
+    .hero-section {
+      text-align: center;
+      max-width: 800px;
+      margin-bottom: 4rem;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeUp 0.8s ease-out forwards;
+    }
+
+    .page-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border: 1px solid rgba(232, 93, 4, 0.3);
+      border-radius: 100px;
+      background: rgba(232, 93, 4, 0.1);
+    }
+
+    .main-title {
+      font-size: clamp(2.5rem, 8vw, 5rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+      line-height: 1.1;
+    }
+
+    .main-title span {
+      color: var(--accent);
+    }
+
+    .description {
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: var(--muted);
+      line-height: 1.8;
+      font-weight: 200;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .year-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .year-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+
+    /* Cards Section */
+    .cards-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .service-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 2.5rem;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(40px);
+      animation: fadeUp 0.8s ease-out forwards;
+      transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.3s ease;
+    }
+
+    .service-card:nth-child(1) { animation-delay: 0.2s; }
+    .service-card:nth-child(2) { animation-delay: 0.35s; }
+
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 50%, rgba(0,0,0,0.2) 100%);
+      pointer-events: none;
+    }
+
+    .service-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-icon-wrap {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: rgba(232, 93, 4, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease;
+    }
+
+    .service-card:hover .card-icon-wrap {
+      transform: scale(1.05);
+    }
+
+    .card-icon-wrap svg {
+      width: 28px;
+      height: 28px;
+      color: var(--accent);
+    }
+
+    .status-badge {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.4rem 0.8rem;
+      border-radius: 100px;
+      border: 1px solid;
+    }
+
+    .status-coming-soon {
+      color: var(--muted);
+      border-color: rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    .status-available {
+      color: #22c55e;
+      border-color: rgba(34, 197, 94, 0.2);
+      background: rgba(34, 197, 94, 0.1);
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.02em;
+    }
+
+    .card-desc {
+      color: var(--muted);
+      font-weight: 200;
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    .price-tag {
+      display: inline-flex;
+      flex-direction: column;
+      background: rgba(232, 93, 4, 0.1);
+      border: 1px solid rgba(232, 93, 4, 0.2);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .price-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+
+    .price-amount {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--fg);
+    }
+
+    .price-note {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+
+    /* Action Button Style */
+    .card-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.875rem 1.5rem;
+      background: var(--accent);
+      color: white;
+      text-decoration: none;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      border-radius: 100px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .card-btn:hover {
+      background: #ff7a2e;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(232, 93, 4, 0.3);
+    }
+
+    .card-btn svg {
+      width: 16px;
+      height: 16px;
+      transition: transform 0.3s ease;
+    }
+
+    .card-btn:hover svg {
+      transform: translateX(4px);
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 4rem 0;
+      max-width: 600px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease-out 0.5s forwards;
+    }
+
+    /* Footer Info */
+    .footer-info {
+      text-align: center;
+      opacity: 0;
+      animation: fadeUp 0.8s ease-out 0.6s forwards;
+    }
+
+    .footer-text {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      .hero-section,
+      .service-card,
+      .navbar,
+      .divider,
+      .footer-info {
+        animation: none;
+        opacity: 1;
+        transform: none;
+      }
+
+      .service-card:hover,
+      .card-btn:hover,
+      .card-btn:hover svg {
+        transform: none;
+      }
+
+      .nav-dot {
+        animation: none;
+      }
+    }
+
+    /* Mobile */
+    @media (max-width: 640px) {
+      .main-content {
+        padding: 6rem 1.25rem 3rem;
+      }
+
+      .cards-section {
+        grid-template-columns: 1fr;
+      }
+
+      .service-card {
+        padding: 1.75rem;
+      }
+
+      .card-icon-wrap {
+        width: 48px;
+        height: 48px;
+      }
+
+      .card-icon-wrap svg {
+        width: 24px;
+        height: 24px;
+      }
+
+      .navbar {
+        padding: 1rem 1.25rem;
+      }
+
+      .nav-link {
+        font-size: 0.7rem;
+        padding: 0.6rem 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Video Background -->
+  <div class="video-container">
+    <video autoplay muted loop playsinline>
+      <source src="background.mp4" type="video/mp4">
+    </video>
+  </div>
+  
+  <!-- Overlays -->
+  <div class="video-overlay"></div>
+  <div class="vignette"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <span class="nav-dot"></span>
+    <a href="index.html" class="nav-link">Home</a>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <span class="page-label">About Us</span>
+      <h1 class="main-title">
+        <span>KasiMadeWebz</span>.co.za
+      </h1>
+      <p class="description">
+        A curated directory of different functions, services, and local businesses. 
+        Connecting you to what matters most in the community.
+      </p>
+      <div class="year-badge">
+        <span class="year-dot"></span>
+        Est. 2026
+      </div>
+    </section>
+
+    <!-- Divider -->
+    <div class="divider"></div>
+
+    <!-- Cards Section -->
+    <section class="cards-section">
+      
+      <!-- Card 1: Add Business -->
+      <div class="service-card">
+        <div class="card-header">
+          <div class="card-icon-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 21h18"></path>
+              <path d="M5 21V7l8-4v18"></path>
+              <path d="M19 21V11l-6-4"></path>
+              <line x1="9" y1="9" x2="9" y2="9.01"></line>
+              <line x1="9" y1="13" x2="9" y2="13.01"></line>
+              <line x1="9" y1="17" x2="9" y2="17.01"></line>
+            </svg>
+          </div>
+          <span class="status-badge status-coming-soon">Coming Soon</span>
+        </div>
+        <h3 class="card-title">Add Your Business</h3>
+        <p class="card-desc">
+          Request to list your business in our growing directory. Gain visibility and connect with new customers in the community.
+        </p>
+      </div>
+
+      <!-- Card 2: Get a Website -->
+      <div class="service-card">
+        <div class="card-header">
+          <div class="card-icon-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+          </div>
+          <span class="status-badge status-available">Available</span>
+        </div>
+        <h3 class="card-title">Get a Website</h3>
+        <p class="card-desc">
+          Professional static websites built for your business. Clean, fast, and reliable without the complexity of a CMS.
+        </p>
+        <div class="price-tag">
+          <span class="price-label">Starting Price</span>
+          <span class="price-amount">R400</span>
+          <span class="price-note">Static sites (No CMS)</span>
+        </div>
+        
+        <!-- NEW BUTTON -->
+        <a href="getwebsite.html" class="card-btn">
+          Get Started
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+
+      </div>
+
+    </section>
+
+    <!-- Footer Info -->
+    <div class="footer-info" style="margin-top: 4rem;">
+      <p class="footer-text">KASIMADEWEBZ.CO.ZA  —  BUILT IN 2026</p>
+    </div>
+
+  </main>
+
+  <script>
+    // Video fallback
+    const video = document.querySelector('video');
+    video.addEventListener('error', () => {
+      document.querySelector('.video-container').style.background = 'linear-gradient(135deg, #0a0a0b 0%, #1a1a2e 100%)';
+    });
+  </script>
+</body>
+</html>

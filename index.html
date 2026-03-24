@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KasiMadeWebz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* 1. GLOBAL SETTINGS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* UPDATED PATH */
+            background-image: url('homebackground.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* 2. TOP BAR */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px; 
+            background: rgba(0, 0, 0, 0.85); 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .brand-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* 3. NAVBAR TOGGLE BUTTON */
+        .menu-toggle {
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .menu-toggle i {
+            font-size: 18px;
+            color: white;
+            transition: transform 0.5s ease;
+        }
+
+        /* 4. CIRCULAR MENU */
+        .circular-menu {
+            position: fixed;
+            top: 70px; 
+            right: 20px; 
+            transform: scale(0); 
+            transform-origin: top right; 
+            width: 140px; 
+            height: 140px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 99;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .circular-menu.active {
+            transform: scale(1);
+        }
+
+        .center-circle {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 50%;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-items {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            list-style: none;
+        }
+
+        .menu-items li {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 40px;
+            height: 40px;
+            margin: -20px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-items li a {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 50%;
+            color: #333; 
+            text-decoration: none;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+
+        /* Menu Hover to Teal */
+        .menu-items li a:hover {
+            background: #0d9488; /* Teal */
+            color: white;
+            box-shadow: 0 4px 10px rgba(13, 148, 136, 0.4);
+            transform: scale(1.1);
+        }
+
+        .menu-items li i {
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        /* Menu Positions */
+        .menu-items li:nth-child(1) {
+            transform: rotate(-90deg) translate(50px) rotate(90deg); /* Top */
+        }
+        .menu-items li:nth-child(2) {
+            transform: rotate(30deg) translate(50px) rotate(-30deg); /* Bottom Right */
+        }
+        .menu-items li:nth-child(3) {
+            transform: rotate(210deg) translate(50px) rotate(-210deg); /* Bottom Left */
+        }
+
+        /* 5. HERO SECTION */
+        .hero-section {
+            margin-top: 60px; 
+            height: 35vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* 6. CARDS SECTION */
+        .content-section {
+            display: flex;
+            justify-content: center;
+            align-items: center; 
+            padding: 10px;
+            padding-bottom: 50px;
+            gap: 10px; 
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            overflow: hidden;
+            text-align: center;
+            font-family: 'Arial', sans-serif;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 32%; 
+            min-width: 100px; 
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.6), 
+                        0 0 60px rgba(255, 255, 255, 0.3),
+                        0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        /* SPECIAL STYLE FOR THE OVAL BUSINESS BUTTON */
+        .card.business-btn {
+            width: 80px;
+            min-width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            padding: 0;
+            overflow: visible; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #0d9488; /* Teal */
+            color: white;
+            box-shadow: 0 5px 15px rgba(13, 148, 136, 0.4);
+            margin-top: 10px; 
+        }
+
+        .card.business-btn:hover {
+            background: #0f766e; /* Darker Teal */
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(13, 148, 136, 0.6);
+        }
+
+        .card.business-btn .card-media,
+        .card.business-btn .card-text,
+        .card.business-btn .share-icon {
+            display: none; 
+        }
+
+        .card.business-btn .card-body {
+            padding: 0;
+            background: transparent;
+        }
+
+        .card.business-btn .card-title {
+            color: white;
+            font-size: 10px;
+            margin: 0;
+        }
+        
+        .card.business-btn .card-body i {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .card-media {
+            width: 100%;
+            height: 100px; 
+            object-fit: cover;
+            background-color: #ddd;
+            display: block;
+        }
+
+        .card-body {
+            padding: 8px; 
+        }
+
+        .card-title {
+            font-size: 12px; 
+            margin-bottom: 4px;
+            font-weight: bold;
+            color: #0f766e; /* Dark Teal */
+        }
+
+        .card-text {
+            font-size: 9px; 
+            color: #666;
+            margin-bottom: 6px;
+            line-height: 1.2;
+        }
+
+        .card-btn {
+            display: inline-block;
+            background-color: #0d9488; /* Teal */
+            color: white;
+            padding: 4px 10px;
+            text-decoration: none;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 9px;
+            transition: background 0.3s;
+            position: relative; 
+            z-index: 2;
+        }
+
+        .card-btn:hover {
+            background-color: #0f766e; /* Dark Teal */
+        }
+
+        /* SHARE ICON */
+        .share-icon {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+            z-index: 10;
+        }
+
+        .share-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .share-icon svg {
+            width: 9px;
+            height: 9px;
+            fill: #333;
+        }
+
+        /* MEDIA QUERY FOR DESKTOP */
+        @media (min-width: 768px) {
+            .content-section {
+                gap: 30px;
+                padding: 20px;
+            }
+            .card {
+                width: 240px; 
+                min-width: auto;
+            }
+            .card-media {
+                height: 160px;
+            }
+            .card-body {
+                padding: 12px;
+            }
+            .card-title {
+                font-size: 18px;
+                margin-bottom: 5px;
+            }
+            .card-text {
+                font-size: 12px;
+                margin-bottom: 10px;
+            }
+            .card-btn {
+                padding: 6px 16px;
+                font-size: 12px;
+            }
+            .share-icon {
+                width: 24px;
+                height: 24px;
+                top: 8px;
+                right: 8px;
+            }
+            .share-icon svg {
+                width: 12px;
+                height: 12px;
+            }
+            .card.business-btn {
+                width: 100px;
+                height: 100px;
+            }
+            .card.business-btn .card-title {
+                font-size: 12px;
+            }
+            .card.business-btn .card-body i {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP BAR -->
+    <nav class="top-bar">
+        <div class="brand-title">KasiMadeWebz</div>
+        <div class="menu-toggle" id="menuBtn" onclick="toggleMenu()">
+            <i class="fas fa-bars" id="menuIcon"></i>
+        </div>
+    </nav>
+
+    <!-- CIRCULAR MENU -->
+    <div class="circular-menu" id="circleMenu">
+        <div class="center-circle"></div>
+        <ul class="menu-items">
+            <li>
+                <a href="index.html">
+                    <i class="fas fa-home"></i>
+                    Home
+                </a>
+            </li>
+            <li>
+                <a href="about.html">
+                    <i class="fas fa-user"></i>
+                    About
+                </a>
+            </li>
+            <li>
+                <a href="getwebsite.html">
+                    <i class="fas fa-briefcase"></i>
+                    Business
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- HERO SECTION -->
+    <div class="hero-section"></div>
+
+    <!-- CARDS SECTION -->
+    <div class="content-section">
+        
+        <!-- CARD 1 -->
+        <div class="card" onclick="window.location.href='sadiesindex.html'">
+            <div class="share-icon" onclick="shareCard(event)" title="Share this card">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/>
+                </svg>
+            </div>
+            <!-- UPDATED PATH -->
+            <img src="sadiescard.jpg" alt="Sadie's Bracelets" class="card-media">
+            <div class="card-body">
+                <h2 class="card-title">Sadie's Bracelets</h2>
+                <p class="card-text">Handcrafted with love. Unique designs.</p>
+                <a href="sadiesindex.html" class="card-btn">View</a>
+            </div>
+        </div>
+
+        <!-- CARD 2 -->
+        <!-- UPDATED PATHS for HTML links and Video source -->
+        <div class="card" onclick="window.location.href='musicproducers.html'">
+            <div class="share-icon" onclick="shareCard(event)" title="Share this card">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/>
+                </svg>
+            </div>
+            
+            <!-- UPDATED PATH -->
+            <video class="card-media" autoplay muted loop playsinline>
+                <source src="musicproducers.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+
+            <div class="card-body">
+                <h2 class="card-title">Music Producers</h2>
+                <p class="card-text">Beats, mixing, and mastering services.</p>
+                <a href="musicproducers.html" class="card-btn">View</a>
+            </div>
+        </div>
+
+        <!-- CARD 3: BUSINESS BUTTON -->
+        <div class="card business-btn" onclick="window.location.href='getwebsite.html'">
+            <div class="card-body">
+                <i class="fas fa-globe"></i>
+                <h2 class="card-title">Get Site</h2>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // 1. TOGGLE CIRCULAR MENU
+        const menuBtn = document.getElementById('menuBtn');
+        const menuIcon = document.getElementById('menuIcon');
+        const circleMenu = document.getElementById('circleMenu');
+
+        function toggleMenu() {
+            circleMenu.classList.toggle('active');
+            
+            if (circleMenu.classList.contains('active')) {
+                menuIcon.classList.remove('fa-bars');
+                menuIcon.classList.add('fa-times');
+            } else {
+                menuIcon.classList.remove('fa-times');
+                menuIcon.classList.add('fa-bars');
+            }
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!circleMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+                if (circleMenu.classList.contains('active')) {
+                    toggleMenu();
+                }
+            }
+        });
+
+        // 2. SHARE FUNCTIONALITY
+        function shareCard(event) {
+            event.stopPropagation(); 
+            const shareUrl = window.location.href;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Check this out',
+                    text: 'Take a look at this item.',
+                    url: shareUrl,
+                })
+                .catch((error) => console.log('Error sharing', error));
+            } else {
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    alert('Link copied to clipboard!');
+                });
+            }
+        }
+    </script>
+
+</body>
+</html>

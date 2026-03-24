@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Your Website</title>
+    <style>
+        /* General Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            /* Sets background.png to cover the whole screen */
+            background-image: url('background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* The container box */
+        .form-container {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        /* Home Button Styling */
+        .home-btn {
+            display: inline-block;
+            text-decoration: none;
+            background-color: #f0f0f0;
+            color: #333;
+            padding: 8px 16px;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            transition: background-color 0.3s;
+        }
+
+        .home-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-label {
+            font-weight: normal;
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* Submit Button - Brown Styling */
+        button[type="submit"] {
+            width: 100%;
+            padding: 14px;
+            background-color: #5D4037; /* Brown Color */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #3E2723; /* Darker Brown on hover */
+        }
+
+        @media (max-width: 480px) {
+            .form-container {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <!-- Home Button -->
+        <a href="index.html" class="home-btn">&larr; Back to Home</a>
+        
+        <h2>Request a Website</h2>
+        
+        <form id="whatsappForm">
+
+            <!-- Contact Name -->
+            <div class="form-group">
+                <label for="contact_name">Contact Name:</label>
+                <input type="text" id="contact_name" name="contact_name" placeholder="e.g. John Doe" required>
+            </div>
+
+            <!-- What the website is for -->
+            <div class="form-group">
+                <label for="website_purpose">What is the website for?</label>
+                <input type="text" id="website_purpose" name="website_purpose" placeholder="e.g. Business Portfolio, Online Store" required>
+            </div>
+
+            <!-- Funds Check -->
+            <div class="form-group">
+                <label>Do you have the funds for the first deposit? (Minimum R250)</label>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="funds" name="funds_confirmed" value="Yes" required>
+                    <label for="funds" class="checkbox-label">Yes, I have the minimum funds available.</label>
+                </div>
+            </div>
+
+            <!-- Website Description -->
+            <div class="form-group">
+                <label for="description">Explain what the website is about:</label>
+                <textarea id="description" name="description" placeholder="Describe your vision, target audience, or features needed..." required></textarea>
+            </div>
+
+            <button type="submit">Submit Request</button>
+        </form>
+    </div>
+
+    <script>
+        // JavaScript to handle the WhatsApp redirection
+        document.getElementById("whatsappForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Stop the form from submitting normally
+
+            // Get values from the form
+            var name = document.getElementById("contact_name").value;
+            var purpose = document.getElementById("website_purpose").value;
+            var funds = document.getElementById("funds").checked ? "Yes" : "No";
+            var desc = document.getElementById("description").value;
+
+            // Construct the message text
+            var message = 
+                " *New Website Request* %0A%0A" + 
+                "*Name:* " + encodeURIComponent(name) + "%0A" +
+                "*Purpose:* " + encodeURIComponent(purpose) + "%0A" +
+                "*Funds Available:* " + funds + "%0A" +
+                "*Details:* " + encodeURIComponent(desc);
+
+            // WhatsApp number (Converted 074... to +27 format)
+            // 0746875342 becomes 27746875342
+            var phoneNumber = "27746875342";
+
+            // Create the WhatsApp URL
+            var url = "https://wa.me/" + phoneNumber + "?text=" + message;
+
+            // Open WhatsApp in a new tab
+            window.open(url, '_blank');
+        });
+    </script>
+
+</body>
+</html>

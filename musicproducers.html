@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Music Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0b;
+      --fg: #f5f5f4;
+      --muted: #6b6b6b;
+      --accent: #e85d04;
+      --accent-glow: rgba(232, 93, 4, 0.4);
+      --card-bg: rgba(20, 20, 22, 0.7);
+      --border: rgba(255, 255, 255, 0.08);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Video Background */
+    .video-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      overflow: hidden;
+    }
+
+    .video-container video {
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      object-fit: cover;
+    }
+
+    /* Overlay for readability */
+    .video-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: linear-gradient(
+        180deg,
+        rgba(10, 10, 11, 0.5) 0%,
+        rgba(10, 10, 11, 0.7) 50%,
+        rgba(10, 10, 11, 0.9) 100%
+      );
+    }
+
+    /* Vignette effect */
+    .vignette {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+      background: radial-gradient(
+        ellipse at center,
+        transparent 0%,
+        transparent 40%,
+        rgba(0, 0, 0, 0.5) 100%
+      );
+    }
+
+    /* Navbar */
+    .navbar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      padding: 1.5rem 2rem;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      transform: translateY(-10px);
+      animation: navFadeIn 0.6s ease-out 0.3s forwards;
+    }
+
+    @keyframes navFadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .nav-link {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.5);
+      text-decoration: none;
+      padding: 0.75rem 1.25rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 100px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-link::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+      );
+      transform: translateX(-100%);
+      transition: transform 0.5s ease;
+    }
+
+    .nav-link:hover::before {
+      transform: translateX(100%);
+    }
+
+    .nav-link:hover {
+      color: rgba(255, 255, 255, 0.9);
+      border-color: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-link:focus-visible {
+      outline: 2px solid rgba(255, 255, 255, 0.5);
+      outline-offset: 2px;
+    }
+
+    .nav-dot {
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.2); }
+    }
+
+    /* Main content */
+    .main-content {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    /* Header */
+    .site-title {
+      font-size: clamp(3rem, 10vw, 7rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      margin-bottom: 0.5rem;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeUp 0.8s ease-out forwards;
+    }
+
+    .site-subtitle {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(0.75rem, 2vw, 1rem);
+      color: var(--muted);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      margin-bottom: 4rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.8s ease-out 0.2s forwards;
+    }
+
+    /* Cards Container - 2 per row */
+    .cards-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      max-width: 900px;
+      width: 100%;
+    }
+
+    /* Card Styles */
+    .portal-card {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4/3;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      cursor: default;
+      color: var(--fg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      opacity: 0;
+      transform: translateY(40px);
+      animation: fadeUp 0.8s ease-out forwards;
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+                  box-shadow 0.4s ease,
+                  border-color 0.3s ease;
+    }
+
+    .portal-card:nth-child(1) {
+      animation-delay: 0.4s;
+    }
+
+    .portal-card:nth-child(2) {
+      animation-delay: 0.55s;
+    }
+
+    .portal-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.03) 0%,
+        transparent 50%,
+        rgba(0, 0, 0, 0.2) 100%
+      );
+      pointer-events: none;
+    }
+
+    .portal-card::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(
+        circle,
+        var(--accent-glow) 0%,
+        transparent 70%
+      );
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+      transform: translate(var(--mouse-x, 50%), var(--mouse-y, 50%));
+    }
+
+    .portal-card:hover::after {
+      opacity: 1;
+    }
+
+    .portal-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                  0 0 60px -20px var(--accent-glow);
+      border-color: rgba(232, 93, 4, 0.3);
+    }
+
+    .card-inner {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 2rem;
+    }
+
+    .card-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: rgba(232, 93, 4, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s ease, transform 0.4s ease;
+    }
+
+    .portal-card:hover .card-icon {
+      background: rgba(232, 93, 4, 0.25);
+      transform: scale(1.1);
+    }
+
+    .card-icon svg {
+      width: 28px;
+      height: 28px;
+      color: var(--accent);
+      transition: transform 0.4s ease;
+    }
+
+    .portal-card:hover .card-icon svg {
+      transform: rotate(-10deg);
+    }
+
+    .card-content {
+      margin-top: auto;
+    }
+
+    .card-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .card-title {
+      font-size: clamp(1.5rem, 3.5vw, 2rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+      transition: color 0.3s ease;
+    }
+
+    .portal-card:hover .card-title {
+      color: var(--accent);
+    }
+
+    .card-description {
+      font-weight: 200;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 260px;
+    }
+
+    .card-status {
+      position: absolute;
+      bottom: 2rem;
+      right: 2rem;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0.5rem 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 100px;
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    /* Animated background shapes */
+    .floating-shape {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.3;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .shape-1 {
+      width: 400px;
+      height: 400px;
+      background: var(--accent);
+      top: 20%;
+      right: -10%;
+      animation: float1 20s ease-in-out infinite;
+    }
+
+    .shape-2 {
+      width: 300px;
+      height: 300px;
+      background: #1a1a2e;
+      bottom: 10%;
+      left: -5%;
+      animation: float2 25s ease-in-out infinite;
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes float1 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(-30px, 20px) scale(1.05); }
+      66% { transform: translate(20px, -30px) scale(0.95); }
+    }
+
+    @keyframes float2 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(40px, -20px) scale(1.1); }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .site-title,
+      .site-subtitle,
+      .portal-card,
+      .navbar {
+        animation: none;
+        opacity: 1;
+        transform: none;
+      }
+
+      .portal-card:hover {
+        transform: none;
+      }
+
+      .floating-shape {
+        animation: none;
+      }
+
+      .nav-dot {
+        animation: none;
+      }
+    }
+
+    /* Tablet and below */
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 1rem 1.25rem;
+      }
+
+      .nav-link {
+        font-size: 0.7rem;
+        padding: 0.6rem 1rem;
+      }
+    }
+
+    /* Mobile - Keep 2 columns, reduce spacing */
+    @media (max-width: 480px) {
+      .main-content {
+        padding: 1rem;
+        padding-top: 15vh;
+        justify-content: flex-start;
+      }
+
+      .site-title {
+        font-size: 2.5rem;
+      }
+
+      .site-subtitle {
+        font-size: 0.7rem;
+        margin-bottom: 2rem;
+      }
+
+      /* Force 2 columns on mobile with smaller gap */
+      .cards-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+      }
+
+      .portal-card {
+        aspect-ratio: 4/3; 
+        border-radius: 16px;
+      }
+
+      .card-inner {
+        padding: 1rem;
+      }
+
+      .card-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+      }
+
+      .card-icon svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      .card-label {
+        font-size: 0.55rem;
+        margin-bottom: 0.25rem;
+      }
+
+      .card-title {
+        font-size: 1.1rem;
+        margin-bottom: 0.25rem;
+      }
+
+      .card-description {
+        font-size: 0.7rem;
+        line-height: 1.4;
+        /* Hide overflow on very small cards if needed, or let it wrap */
+        display: none; /* Optional: Hide description on very small screens to save space */
+      }
+
+      .card-status {
+        bottom: 0.75rem;
+        right: 0.75rem;
+        font-size: 0.5rem;
+        padding: 0.3rem 0.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Video Background -->
+  <div class="video-container">
+    <video autoplay muted loop playsinline>
+      <source src="musicproducersbackground.mp4" type="video/mp4">
+    </video>
+  </div>
+  
+  <!-- Overlays -->
+  <div class="video-overlay"></div>
+  <div class="vignette"></div>
+  
+  <!-- Floating shapes for atmosphere -->
+  <div class="floating-shape shape-1"></div>
+  <div class="floating-shape shape-2"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <span class="nav-dot"></span>
+    <a href="index.html" class="nav-link">Home</a>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <h1 class="site-title">Music Portal</h1>
+    <p class="site-subtitle">Choose your path</p>
+
+    <div class="cards-container">
+      <!-- Beats Card -->
+      <div class="portal-card">
+        <div class="card-inner">
+          <div class="card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18V5l12-2v13"></path>
+              <circle cx="6" cy="18" r="3"></circle>
+              <circle cx="18" cy="16" r="3"></circle>
+            </svg>
+          </div>
+          <div class="card-content">
+            <span class="card-label">Sound Studio</span>
+            <h2 class="card-title">Beats</h2>
+            <p class="card-description">Explore production files, samples, and audio projects in the workspace.</p>
+          </div>
+          <span class="card-status">Coming Soon</span>
+        </div>
+      </div>
+
+      <!-- Journal Card -->
+      <div class="portal-card">
+        <div class="card-inner">
+          <div class="card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              <line x1="8" y1="7" x2="16" y2="7"></line>
+              <line x1="8" y1="11" x2="14" y2="11"></line>
+            </svg>
+          </div>
+          <div class="card-content">
+            <span class="card-label">Documentation</span>
+            <h2 class="card-title">Journal</h2>
+            <p class="card-description">Thoughts, notes, and written entries organized chronologically.</p>
+          </div>
+          <span class="card-status">Coming Soon</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Initialize variables before use
+    const cards = document.querySelectorAll('.portal-card');
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Mouse tracking for glow effect
+    function handleMouseMove(e) {
+      if (prefersReducedMotion) return;
+      
+      const rect = this.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      
+      this.style.setProperty('--mouse-x', `${x}%`);
+      this.style.setProperty('--mouse-y', `${y}%`);
+    }
+
+    cards.forEach(card => {
+      card.addEventListener('mousemove', handleMouseMove);
+    });
+
+    // Parallax on floating shapes (desktop only)
+    if (!prefersReducedMotion) {
+      const shapes = document.querySelectorAll('.floating-shape');
+      
+      document.addEventListener('mousemove', (e) => {
+        const x = (e.clientX / window.innerWidth - 0.5) * 2;
+        const y = (e.clientY / window.innerHeight - 0.5) * 2;
+        
+        shapes.forEach((shape, index) => {
+          const speed = (index + 1) * 15;
+          shape.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+        });
+      });
+    }
+
+    // Video fallback
+    const video = document.querySelector('video');
+    video.addEventListener('error', () => {
+      document.querySelector('.video-container').style.background = 'linear-gradient(135deg, #0a0a0b 0%, #1a1a2e 100%)';
+    });
+  </script>
+</body>
+</html>
