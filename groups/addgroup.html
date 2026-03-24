@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Your Group | GroupChats</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.7/dist/iconify-icon.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #050505;
+            color: #ffffff;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Background */
+        .bg-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('../groups/groupshero.jpg');
+            background-size: cover; background-position: center; background-repeat: no-repeat;
+            z-index: -2;
+        }
+        .bg-overlay::after {
+            content: '';
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(5,5,5,0.8), rgba(5,5,5,0.95), #050505);
+        }
+
+        /* Animations */
+        @keyframes reveal {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-reveal { animation: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .delay-1 { animation-delay: 0.1s; }
+
+        /* Card */
+        .info-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+        }
+
+        /* Button */
+        .btn-whatsapp {
+            background: #25D366;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn-whatsapp:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(37, 211, 102, 0.3);
+            background: #20bd5a;
+        }
+
+        /* Nav Link */
+        .nav-link { position: relative; padding: 0.5rem 0; }
+        .nav-link::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1px;
+            background: #EF4444; transition: width 0.3s ease;
+        }
+        .nav-link:hover::after { width: 100%; }
+    </style>
+</head>
+<body>
+
+    <!-- Background -->
+    <div class="bg-overlay"></div>
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-black/50 border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="../index.html" class="text-xl font-semibold tracking-tight">
+                <span class="text-white">Group</span><span class="text-red-500">Chats</span>
+            </a>
+
+            <div class="flex items-center gap-8">
+                <a href="../index.html" class="nav-link text-sm text-neutral-400 hover:text-white transition-colors flex items-center gap-2">
+                    <iconify-icon icon="lucide:home" width="16"></iconify-icon>
+                    Home
+                </a>
+                <a href="../groupChats.html" class="nav-link text-sm text-white flex items-center gap-2">
+                    <iconify-icon icon="lucide:users" width="16"></iconify-icon>
+                    Groups
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-28 pb-20 px-6">
+        <div class="max-w-lg mx-auto">
+            
+            <!-- Header -->
+            <div class="text-center mb-10 animate-reveal opacity-0">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-500/10 border border-green-500/20 mb-6">
+                    <iconify-icon icon="lucide:message-circle" width="32" class="text-green-500"></iconify-icon>
+                </div>
+                <h1 class="text-3xl md:text-4xl font-semibold tracking-tight mb-3">
+                    Submit Your Group
+                </h1>
+                <p class="text-neutral-400 text-sm max-w-md mx-auto">
+                    Send us your group details via WhatsApp to get listed.
+                </p>
+            </div>
+
+            <!-- Info Card -->
+            <div class="info-card p-8 md:p-10 animate-reveal opacity-0 delay-1">
+                
+                <!-- Requirements List -->
+                <div class="mb-8">
+                    <h3 class="text-xs font-medium uppercase tracking-wider text-neutral-500 mb-4">Please include the following details:</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-3">
+                            <iconify-icon icon="lucide:check-circle" width="18" class="text-green-500 mt-0.5"></iconify-icon>
+                            <span class="text-sm text-neutral-300">Group Name</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <iconify-icon icon="lucide:check-circle" width="18" class="text-green-500 mt-0.5"></iconify-icon>
+                            <span class="text-sm text-neutral-300">WhatsApp Invite Link</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <iconify-icon icon="lucide:check-circle" width="18" class="text-green-500 mt-0.5"></iconify-icon>
+                            <span class="text-sm text-neutral-300">Image (Free-use only, no Pinterest)</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="border-t border-white/5 pt-8">
+                    <!-- WhatsApp Button -->
+                    <!-- Using South African international format +27 -->
+                    <a 
+                        href="https://wa.me/27746875342?text=Hi%2C%20I%20would%20like%20to%20submit%20a%20group.%0AName%3A%20%0ALink%3A%20" 
+                        target="_blank"
+                        class="btn-whatsapp"
+                    >
+                        <iconify-icon icon="mdi:whatsapp" width="20"></iconify-icon>
+                        Chat on WhatsApp
+                    </a>
+                    
+                    <!-- Number Display -->
+                    <p class="text-center text-neutral-500 text-xs mt-4">
+                        Or save the number: <span class="text-neutral-300 font-mono">074 687 5342</span>
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Note -->
+            <div class="mt-8 text-center animate-reveal opacity-0 delay-1">
+                <p class="text-neutral-600 text-xs">
+                    Submissions are reviewed within 24 hours.
+                </p>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 py-10 px-6">
+        <div class="max-w-7xl mx-auto text-center">
+            <p class="text-neutral-500 text-xs">
+                © 2026 GroupChats. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>

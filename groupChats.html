@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Chats | Connect & Engage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.7/dist/iconify-icon.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #050505;
+            color: #ffffff;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Background Image */
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('groups/groupshero.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -2;
+        }
+
+        .bg-overlay::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(5,5,5,0.7), rgba(5,5,5,0.9), #050505);
+        }
+
+        /* Animations */
+        @keyframes reveal {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-reveal {
+            animation: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+
+        /* Card Styling */
+        .group-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            width: 100%;
+            max-width: 200px;
+        }
+
+        .group-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(239, 68, 68, 0.3);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            z-index: 10;
+        }
+
+        .group-card img {
+            transition: all 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .group-card:hover img {
+            transform: scale(1.1);
+            opacity: 0.8;
+        }
+
+        /* HONEYCOMB LAYOUT - ANDROID MOBILE OPTIMIZED */
+        .cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 2rem 0.5rem;
+            position: relative;
+        }
+
+        /* ANDROID MOBILE (up to 480px) - Tight Honeycomb */
+        @media (max-width: 480px) {
+            .cards-container {
+                gap: 0.8rem;
+                max-width: 100%;
+            }
+            .group-card {
+                max-width: 160px;
+                flex: 0 0 calc(50% - 0.4rem);
+            }
+            /* Honeycomb offset for even cards */
+            .group-card:nth-child(even) {
+                margin-top: 2.2rem;
+                margin-left: 1rem;
+            }
+            .group-card:nth-child(3n+1) {
+                margin-left: 0;
+            }
+        }
+
+        /* ANDROID TABLET/PHABLET (481px - 639px) */
+        @media (min-width: 481px) and (max-width: 639px) {
+            .cards-container {
+                gap: 1rem;
+                max-width: 500px;
+                margin: 0 auto;
+            }
+            .group-card {
+                max-width: 180px;
+                flex: 0 0 calc(33.333% - 0.67rem);
+            }
+            .group-card:nth-child(3n+2) {
+                margin-top: 2.8rem;
+            }
+            .group-card:nth-child(3n) {
+                margin-top: 1.4rem;
+            }
+        }
+
+        /* LARGER MOBILE/TABLET (640px - 1023px) */
+        @media (min-width: 640px) and (max-width: 1023px) {
+            .cards-container {
+                gap: 1.5rem;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+            .group-card {
+                max-width: 200px;
+            }
+            .group-card:nth-child(3n+2) {
+                margin-top: 3.2rem;
+            }
+            .group-card:nth-child(3n) {
+                margin-top: 1.6rem;
+            }
+        }
+
+        /* DESKTOP (1024px+) - Enhanced Honeycomb */
+        @media (min-width: 1024px) {
+            .cards-container {
+                gap: 2rem;
+                padding-top: 3rem;
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+            .group-card {
+                max-width: 240px;
+            }
+            .group-card:nth-child(3n+2) {
+                margin-top: 4rem;
+            }
+            .group-card:nth-child(3n) {
+                margin-top: 2rem;
+            }
+        }
+
+        /* Button Styling */
+        .btn-join {
+            background: linear-gradient(135deg, #EF4444, #DC2626);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn-join:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-join span {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+        }
+
+        /* Special Request Card Style */
+        .request-card {
+            background: rgba(239, 68, 68, 0.05);
+            border: 1px dashed rgba(239, 68, 68, 0.3);
+        }
+
+        .request-card:hover {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+
+        /* Nav Link Hover */
+        .nav-link {
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: #EF4444;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Image */
+        .hero-image {
+            mask-image: linear-gradient(to bottom, transparent, black 10%, black 70%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 70%, transparent);
+        }
+    </style>
+</head>
+<body>
+    <!-- Background -->
+    <div class="bg-overlay"></div>
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-black/50 border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="index.html" class="text-xl font-semibold tracking-tight">
+                <span class="text-white">Group</span><span class="text-red-500">Chats</span>
+            </a>
+
+            <div class="flex items-center gap-8">
+                <a href="index.html" class="nav-link text-sm text-neutral-400 hover:text-white transition-colors flex items-center gap-2">
+                    <iconify-icon icon="lucide:home" width="16"></iconify-icon>
+                    Home
+                </a>
+                <a href="groupChats.html" class="nav-link text-sm text-white flex items-center gap-2">
+                    <iconify-icon icon="lucide:users" width="16"></iconify-icon>
+                    Groups
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-20 pb-12 px-6">
+        <div class="max-w-7xl mx-auto">
+            <!-- Hero Image -->
+            <div class="relative rounded-3xl overflow-hidden mb-12 animate-reveal opacity-0">
+                <img 
+                    src="groupshero.jpg" 
+                    alt="Group Chats Hero" 
+                    class="hero-image w-full h-[40vh] md:h-[50vh] object-cover"
+                >
+                <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent"></div>
+                
+                <div class="absolute bottom-0 left-0 right-0 p-6 md:p-10">
+                    <p class="text-red-500 text-xs font-medium tracking-widest uppercase mb-3 animate-reveal opacity-0 delay-1">
+                        Community Groups
+                    </p>
+                    <h1 class="text-3xl md:text-5xl lg:text-6xl font-semibold tracking-tight leading-tight mb-3 animate-reveal opacity-0 delay-2">
+                        Join The<br>
+                        <span class="bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">Conversation</span>
+                    </h1>
+                    <p class="text-neutral-400 text-base max-w-xl animate-reveal opacity-0 delay-3">
+                        Connect with like-minded individuals in our curated group chats.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Section Header -->
+            <div class="text-center mb-10 animate-reveal opacity-0 delay-3">
+                <h2 class="text-2xl md:text-3xl font-semibold tracking-tight mb-3">
+                    Active Groups
+                </h2>
+                <p class="text-neutral-400 text-sm max-w-xl mx-auto">
+                    Browse our active community groups. Click to join.
+                </p>
+            </div>
+
+            <!-- HONEYCOMB CARDS CONTAINER -->
+            <div class="cards-container animate-reveal opacity-0 delay-4">
+                
+                <!-- Black Love Group Chat Card -->
+                <div class="group-card">
+                    <div class="relative aspect-[4/3] overflow-hidden">
+                        <img src="groups/blacklove.jpg" alt="Black Love Group Chat" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                    </div>
+                    <div class="p-2.5">
+                        <h3 class="text-xs font-semibold tracking-tight mb-1 group-hover:text-red-400 transition-colors">
+                            Black Love Group Chat
+                        </h3>
+                        <p class="text-neutral-400 text-[0.6rem] mb-2 leading-relaxed">
+                            Celebrating Black love, relationships, and culture.
+                        </p>
+                        <div class="flex items-center gap-3 mb-2 text-[0.55rem] text-neutral-500">
+                            <span class="flex items-center gap-1">
+                                <iconify-icon icon="lucide:users" width="10"></iconify-icon>
+                                100+ Members
+                            </span>
+                        </div>
+                        <a href="https://chat.whatsapp.com/KYqxFr5mDS7Ku4o9outuTd" target="_blank" rel="noopener noreferrer" class="btn-join">
+                            <span>
+                                <iconify-icon icon="lucide:log-in" width="10"></iconify-icon>
+                                Join Group
+                            </span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Link SA Group Card -->
+                <div class="group-card">
+                    <div class="relative aspect-[4/3] overflow-hidden">
+                        <img src="groups/linksa.jpg" alt="Link SA" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                    </div>
+                    <div class="p-2.5">
+                        <h3 class="text-xs font-semibold tracking-tight mb-1 group-hover:text-red-400 transition-colors">
+                            Link SA🌸
+                        </h3>
+                        <p class="text-neutral-400 text-[0.6rem] mb-2 leading-relaxed">
+                            Connect and network across South Africa.
+                        </p>
+                        <div class="flex items-center gap-3 mb-2 text-[0.55rem] text-neutral-500">
+                            <span class="flex items-center gap-1">
+                                <iconify-icon icon="lucide:users" width="10"></iconify-icon>
+                                100+ Members
+                            </span>
+                        </div>
+                        <a href="https://chat.whatsapp.com/KPLz8ZWjg3c1JxWTMcymJq" target="_blank" rel="noopener noreferrer" class="btn-join">
+                            <span>
+                                <iconify-icon icon="lucide:log-in" width="10"></iconify-icon>
+                                Join Group
+                            </span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Paradise Group Card -->
+                <div class="group-card">
+                    <div class="relative aspect-[4/3] overflow-hidden">
+                        <img src="groups/paradise.jpg" alt="Paradise" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                    </div>
+                    <div class="p-2.5">
+                        <h3 class="text-xs font-semibold tracking-tight mb-1 group-hover:text-red-400 transition-colors">
+                            Paradise
+                        </h3>
+                        <p class="text-neutral-400 text-[0.6rem] mb-2 leading-relaxed">
+                            Your escape to meaningful connections.
+                        </p>
+                        <div class="flex items-center gap-3 mb-2 text-[0.55rem] text-neutral-500">
+                            <span class="flex items-center gap-1">
+                                <iconify-icon icon="lucide:users" width="10"></iconify-icon>
+                                100+ Members
+                            </span>
+                        </div>
+                        <a href="https://chat.whatsapp.com/DolmkN6b0YpACd1FGlLjlQ" target="_blank" rel="noopener noreferrer" class="btn-join">
+                            <span>
+                                <iconify-icon icon="lucide:log-in" width="10"></iconify-icon>
+                                Join Group
+                            </span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Placeholder Card -->
+                <div class="group-card">
+                    <div class="relative aspect-[4/3] overflow-hidden bg-neutral-900">
+                        <div class="w-full h-full flex items-center justify-center">
+                            <iconify-icon icon="lucide:image" width="28" class="text-neutral-700"></iconify-icon>
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                        <div class="absolute top-2 left-2">
+                            <span class="bg-amber-500/20 border border-amber-500/30 text-amber-500 px-1.5 py-0.5 rounded-full text-[0.5rem] uppercase tracking-widest">
+                                Soon
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-2.5">
+                        <h3 class="text-xs font-semibold tracking-tight mb-1 text-neutral-500">
+                            More Groups
+                        </h3>
+                        <p class="text-neutral-500 text-[0.6rem] mb-2 leading-relaxed">
+                            Stay tuned for more groups.
+                        </p>
+                        <button class="w-full py-1.5 border border-white/10 rounded-full text-neutral-500 text-[0.55rem] font-semibold uppercase tracking-widest cursor-not-allowed" disabled>
+                            <span class="flex items-center justify-center gap-1">
+                                <iconify-icon icon="lucide:clock" width="10"></iconify-icon>
+                                Pending
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Request to Add Group Card -->
+                <div class="group-card request-card">
+                    <div class="relative aspect-[4/3] overflow-hidden bg-black/40 flex items-center justify-center">
+                        <div class="text-center p-2">
+                            <div class="w-10 h-10 mx-auto mb-1 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                                <iconify-icon icon="lucide:plus" width="20" class="text-red-400"></iconify-icon>
+                            </div>
+                            <p class="text-red-400 text-[0.6rem] font-medium">Add Yours</p>
+                        </div>
+                    </div>
+                    <div class="p-2.5">
+                        <h3 class="text-xs font-semibold tracking-tight mb-1 text-red-400">
+                            Request Feature
+                        </h3>
+                        <p class="text-neutral-400 text-[0.6rem] mb-2 leading-relaxed">
+                            Want your group listed?
+                        </p>
+                        <a href="groups/addgroup.html" class="btn-join bg-transparent border border-red-500/50 text-red-400 hover:bg-red-500/10 hover:border-red-500">
+                            <span>
+                                <iconify-icon icon="lucide:arrow-right" width="10"></iconify-icon>
+                                Submit
+                            </span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 py-10 px-6 mt-12">
+        <div class="max-w-7xl mx-auto text-center">
+            <p class="text-neutral-500 text-xs">
+                © 2026 GroupChats. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>
